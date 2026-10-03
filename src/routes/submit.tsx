@@ -32,7 +32,7 @@ function Submit() {
     e.preventDefault();
     let u: URL;
     try { u = new URL(url); } catch { return toast.error("Enter a valid URL"); }
-    if (!/(^|\.)(x|twitter)\.com$/.test(u.hostname)) return toast.error("Only x.com or twitter.com links");
+    if (!/(^|\.)(x|twitter)\.com$/.test(u.hostname)) { toast.error("Only x.com or twitter.com links"); return; }
     const handle = "@" + (u.pathname.split("/").filter(Boolean)[0] ?? "unknown");
     setBusy(true);
     const { error } = await supabase.from("trending_items").insert({
@@ -43,7 +43,7 @@ function Submit() {
       submitted_by: session!.user.id,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Indexed. It's live on Xtrnd.");
     qc.invalidateQueries({ queryKey: ["items"] });
     navigate({ to: "/" });
