@@ -14,7 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      trending_items: {
+        Row: {
+          author_avatar: string | null
+          author_handle: string
+          author_name: string | null
+          category: Database["public"]["Enums"]["item_category"]
+          created_at: string
+          external_url: string
+          id: string
+          metrics: Json
+          submitted_by: string | null
+          title_or_snippet: string
+          type: Database["public"]["Enums"]["item_type"]
+        }
+        Insert: {
+          author_avatar?: string | null
+          author_handle: string
+          author_name?: string | null
+          category: Database["public"]["Enums"]["item_category"]
+          created_at?: string
+          external_url: string
+          id?: string
+          metrics?: Json
+          submitted_by?: string | null
+          title_or_snippet: string
+          type: Database["public"]["Enums"]["item_type"]
+        }
+        Update: {
+          author_avatar?: string | null
+          author_handle?: string
+          author_name?: string | null
+          category?: Database["public"]["Enums"]["item_category"]
+          created_at?: string
+          external_url?: string
+          id?: string
+          metrics?: Json
+          submitted_by?: string | null
+          title_or_snippet?: string
+          type?: Database["public"]["Enums"]["item_type"]
+        }
+        Relationships: []
+      }
+      user_bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_bookmarks_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "trending_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +93,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      item_category:
+        | "AI & Tech"
+        | "SaaS & Startups"
+        | "Design & UX"
+        | "Finance"
+        | "Crypto"
+      item_type: "Post" | "Account" | "Community" | "Thread" | "Media"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +226,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      item_category: [
+        "AI & Tech",
+        "SaaS & Startups",
+        "Design & UX",
+        "Finance",
+        "Crypto",
+      ],
+      item_type: ["Post", "Account", "Community", "Thread", "Media"],
+    },
   },
 } as const
