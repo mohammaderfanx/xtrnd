@@ -31,7 +31,7 @@ function Submit() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     let u: URL;
-    try { u = new URL(url); } catch { return toast.error("Enter a valid URL"); }
+    try { u = new URL(url); } catch { toast.error("Enter a valid URL"); return; }
     if (!/(^|\.)(x|twitter)\.com$/.test(u.hostname)) { toast.error("Only x.com or twitter.com links"); return; }
     const handle = "@" + (u.pathname.split("/").filter(Boolean)[0] ?? "unknown");
     setBusy(true);
