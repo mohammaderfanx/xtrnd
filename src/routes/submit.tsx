@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useRef, useState } from "react";
+import { X, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, TYPES, detectType, useSession, type Category, type ItemType } from "@/lib/xtrnd";
+import { unfurlX, type Unfurled } from "@/lib/unfurl.functions";
+import { Avatar } from "@/components/ItemBits";
+import { CATEGORIES, TYPES, detectType, fmt, useSession, type Category, type Item, type ItemType } from "@/lib/xtrnd";
 
 export const Route = createFileRoute("/submit")({
   head: () => ({
@@ -18,35 +21,64 @@ export const Route = createFileRoute("/submit")({
   component: Submit,
 });
 
+// 0-100 display score from raw engagement (log-scaled).
+const toScore = (m: { likes: number; retweets: number; views: number }) =>
+  Math.max(40, Math.min(99, Math.round(20 * Math.log10(1 + m.likes + m.retweets * 2.5 + m.views * 0.01))));
+
 function Submit() {
   const { session, ready } = useSession();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const unfurl = useServerFn(unfurlX);
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<Category>("AI & Tech");
   const [type, setType] = useState<ItemType | "auto">("auto");
   const [note, setNote] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [meta, setMeta] = useState<Unfurled | null>(null);
+  const [looking, setLooking] = useState(false);
+  const last = useRef("");
 
-  const submit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const u = url.trim();
+    if (!/^https?:\/\/(www\.)?(x|twitter)\.com\/\S+/.test(u) || u === last.current) return;
+    const t = setTimeout(async () => {
+      last.current = u; setLooking(true);
+      try {
+        const r = await unfurl({ data: { url: u } });
+        if (r.ok) { setMeta(r.item); setNote(r.item.text); setType(r.item.type); }
+        else { setMeta(null); toast.message(r.error); }
+      } finally { setLooking(false); }
+    }, 350);
+    return () => clearTimeout(t);
+  }, [url, unfurl]);
+
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
     let u: URL;
     try { u = new URL(url); } catch { toast.error("Enter a valid URL"); return; }
     if (!/(^|\.)(x|twitter)\.com$/.test(u.hostname)) { toast.error("Only x.com or twitter.com links"); return; }
-    const handle = "@" + (u.pathname.split("/").filter(Boolean)[0] ?? "unknown");
-    setBusy(true);
-    const { error } = await supabase.from("trending_items").insert({
-      external_url: u.toString(), category, type: type === "auto" ? detectType(url) : type,
-      author_handle: handle, author_name: handle.slice(1),
-      author_avatar: `https://unavatar.io/x/${handle.slice(1)}`,
+    const handle = meta?.author_handle ?? "@" + (u.pathname.split("/").filter(Boolean)[0] ?? "unknown");
+    const m = meta?.metrics ?? { likes: 0, retweets: 0, views: 0 };
+    const row = {
+      id: crypto.randomUUID(),
+      external_url: meta?.url ?? u.toString(), category, type: type === "auto" ? detectType(url) : type,
+      author_handle: handle, author_name: meta?.author_name ?? handle.slice(1),
+      author_avatar: meta?.author_avatar ?? `https://unavatar.io/x/${handle.slice(1)}`,
       title_or_snippet: note.trim() || `Submitted from ${handle}`,
+      metrics: { ...m, engagement_score: toScore(m) },
       submitted_by: session!.user.id,
-    });
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Indexed. It's live on Xtrnd.");
-    qc.invalidateQueries({ queryKey: ["items"] });
+    };
+    // Optimistic: show it in the feed immediately, roll back on failure.
+    const prev = qc.getQueryData<Item[]>(["items"]);
+    qc.setQueryData<Item[]>(["items"], (old = []) => [{ ...row, created_at: new Date().toISOString(), rank_score: 1e9 } as Item, ...old]);
     navigate({ to: "/" });
+    toast.success("Indexed. It's live on Xtrnd.");
+    supabase.from("trending_items").insert(row).then(({ error }) => {
+      if (error) { qc.setQueryData(["items"], prev); toast.error(`Submission failed: ${error.message}`); }
+      qc.invalidateQueries({ queryKey: ["items"] });
+      qc.invalidateQueries({ queryKey: ["history"] });
+      qc.invalidateQueries({ queryKey: ["curators"] });
+    });
   };
 
   const field = "h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-ring";
@@ -64,8 +96,28 @@ function Submit() {
         ) : (
           <form onSubmit={submit} className="mt-6 space-y-4">
             <label className="block space-y-1.5"><span className="text-xs text-muted-foreground">X.com URL</span>
-              <input required value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://x.com/user/status/…" className={field} /></label>
-            <label className="block space-y-1.5"><span className="text-xs text-muted-foreground">Key takeaway (optional)</span>
+              <div className="relative">
+                <input required autoFocus value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://x.com/user/status/…" className={`${field} pr-9`} />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                  {looking ? <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /> : meta ? <CheckCircle2 className="h-4 w-4 text-signal" /> : null}
+                </span>
+              </div>
+            </label>
+            <div className="flex h-[52px] items-center gap-3 rounded-md border bg-background px-3">
+              {meta ? (
+                <>
+                  <Avatar src={meta.author_avatar} size={30} />
+                  <div className="min-w-0 flex-1 leading-tight">
+                    <div className="truncate text-sm font-medium">{meta.author_name}</div>
+                    <div className="truncate font-mono text-[11px] text-muted-foreground">{meta.author_handle}</div>
+                  </div>
+                  <span className="font-mono text-[11px] text-muted-foreground">{fmt(meta.metrics.views)} · {fmt(meta.metrics.likes)}♥</span>
+                </>
+              ) : (
+                <span className="font-mono text-xs text-muted-foreground">{looking ? "Reading post…" : "Paste a link to auto-fill details"}</span>
+              )}
+            </div>
+            <label className="block space-y-1.5"><span className="text-xs text-muted-foreground">Key takeaway</span>
               <textarea value={note} maxLength={280} onChange={(e) => setNote(e.target.value)} rows={3}
                 className="w-full rounded-md border bg-background p-3 text-sm outline-none focus:border-ring" /></label>
             <div className="grid grid-cols-2 gap-3">
@@ -77,8 +129,8 @@ function Submit() {
                   <option value="auto">Auto ({url ? detectType(url) : "detect"})</option>
                   {TYPES.map((t) => <option key={t}>{t}</option>)}</select></label>
             </div>
-            <button disabled={busy} className="h-10 w-full rounded-md bg-signal text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
-              {busy ? "Indexing…" : "Submit for indexation"}
+            <button disabled={looking} className="h-10 w-full rounded-md bg-signal text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
+              Publish to Xtrnd
             </button>
           </form>
         )}
