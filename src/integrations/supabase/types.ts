@@ -14,6 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
+      curator_profiles: {
+        Row: {
+          created_at: string
+          handle: string
+          id: string
+          is_verified_curator: boolean
+          reputation_score: number
+          submissions_count: number
+        }
+        Insert: {
+          created_at?: string
+          handle: string
+          id: string
+          is_verified_curator?: boolean
+          reputation_score?: number
+          submissions_count?: number
+        }
+        Update: {
+          created_at?: string
+          handle?: string
+          id?: string
+          is_verified_curator?: boolean
+          reputation_score?: number
+          submissions_count?: number
+        }
+        Relationships: []
+      }
+      item_analytics_history: {
+        Row: {
+          engagement_score: number
+          id: string
+          item_id: string
+          likes_count: number
+          recorded_at: string
+          retweets_count: number
+          views_count: number
+        }
+        Insert: {
+          engagement_score?: number
+          id?: string
+          item_id: string
+          likes_count?: number
+          recorded_at?: string
+          retweets_count?: number
+          views_count?: number
+        }
+        Update: {
+          engagement_score?: number
+          id?: string
+          item_id?: string
+          likes_count?: number
+          recorded_at?: string
+          retweets_count?: number
+          views_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_analytics_history_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "trending_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trending_items: {
         Row: {
           author_avatar: string | null
@@ -27,6 +92,7 @@ export type Database = {
           submitted_by: string | null
           title_or_snippet: string
           type: Database["public"]["Enums"]["item_type"]
+          rank_score: number | null
         }
         Insert: {
           author_avatar?: string | null
@@ -90,7 +156,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      bookmark_counts: {
+        Args: never
+        Returns: {
+          item_id: string
+          saves: number
+        }[]
+      }
+      calculate_engagement_score: {
+        Args: {
+          created: string
+          likes: number
+          retweets: number
+          views: number
+        }
+        Returns: number
+      }
+      rank_score: {
+        Args: { "": Database["public"]["Tables"]["trending_items"]["Row"] }
+        Returns: {
+          error: true
+        } & "the function public.rank_score with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
+      }
     }
     Enums: {
       item_category:
