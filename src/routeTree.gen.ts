@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
+import { Route as CuratorsRouteImport } from './routes/curators'
 import { Route as SubmitRouteImport } from './routes/submit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const BookmarksRoute = BookmarksRouteImport.update({
   path: '/bookmarks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CuratorsRoute = CuratorsRouteImport.update({
+  id: '/curators',
+  path: '/curators',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubmitRoute = SubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
+  '/curators': typeof CuratorsRoute
   '/submit': typeof SubmitRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
+  '/curators': typeof CuratorsRoute
   '/submit': typeof SubmitRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
+  '/curators': typeof CuratorsRoute
   '/submit': typeof SubmitRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/bookmarks' | '/submit'
+  fullPaths: '/' | '/auth' | '/bookmarks' | '/curators' | '/submit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/bookmarks' | '/submit'
-  id: '__root__' | '/' | '/auth' | '/bookmarks' | '/submit'
+  to: '/' | '/auth' | '/bookmarks' | '/curators' | '/submit'
+  id: '__root__' | '/' | '/auth' | '/bookmarks' | '/curators' | '/submit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   BookmarksRoute: typeof BookmarksRoute
+  CuratorsRoute: typeof CuratorsRoute
   SubmitRoute: typeof SubmitRoute
 }
 
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookmarksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/curators': {
+      id: '/curators'
+      path: '/curators'
+      fullPath: '/curators'
+      preLoaderRoute: typeof CuratorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/submit': {
       id: '/submit'
       path: '/submit'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   BookmarksRoute: BookmarksRoute,
+  CuratorsRoute: CuratorsRoute,
   SubmitRoute: SubmitRoute,
 }
 export const routeTree = rootRouteImport
