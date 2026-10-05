@@ -32,6 +32,7 @@
   --color-ring: var(--ring);
   --color-signal: var(--signal);
   --color-hot: var(--hot);
+  --color-rising: var(--rising);
 }
 
 /* Dark by default: neutral-950 canvas, neutral-800 grid lines, lime signal accent */
@@ -55,9 +56,10 @@
   --destructive-foreground: oklch(0.97 0 0);
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
-  --ring: oklch(0.88 0.2 128);
-  --signal: oklch(0.88 0.2 128);
-  --hot: oklch(0.75 0.18 55);
+  --ring: oklch(0.78 0.17 160);
+  --signal: oklch(0.78 0.17 160);
+  --hot: oklch(0.72 0.19 40);
+  --rising: oklch(0.82 0.16 80);
 }
 
 @layer base {
