@@ -45,6 +45,11 @@ function Index() {
   const [sort, setSort] = useState<"rank" | "score">("rank");
   const [view, setView] = useState<"grid" | "terminal">("grid");
 
+  useEffect(() => {
+    const h = (e: Event) => setCat((e as CustomEvent<Category>).detail);
+    window.addEventListener("xtrnd:category", h);
+    return () => window.removeEventListener("xtrnd:category", h);
+  }, []);
   useEffect(() => { const v = localStorage.getItem("xtrnd-view"); if (v === "terminal") setView("terminal"); }, []);
   const setViewP = (v: "grid" | "terminal") => { setView(v); localStorage.setItem("xtrnd-view", v); };
 
