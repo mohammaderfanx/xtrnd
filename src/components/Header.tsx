@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Plus, Bookmark, LogOut } from "lucide-react";
+import { Plus, Bookmark, LogOut, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/xtrnd";
 
@@ -14,6 +14,10 @@ export function Header() {
           Xtrnd
         </Link>
         <nav className="ml-auto flex items-center gap-1 text-sm">
+          <Link to="/curators" className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-muted-foreground hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}>
+            <Trophy className="h-4 w-4" /><span className="hidden sm:inline">Curators</span>
+          </Link>
           <Link to="/bookmarks" className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-muted-foreground hover:text-foreground"
             activeProps={{ className: "text-foreground" }}>
             <Bookmark className="h-4 w-4" /><span className="hidden sm:inline">Saved</span>

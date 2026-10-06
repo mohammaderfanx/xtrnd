@@ -20,7 +20,7 @@ const V: Record<Exclude<Velocity, null>, { label: string; cls: string }> = {
   Rising: { label: "⚡ Rising", cls: "border-rising/40 bg-rising/10 text-rising" },
   Evergreen: { label: "💎 Evergreen", cls: "border-signal/40 bg-signal/10 text-signal" },
 };
-export function VelocityBadge({ v }: { v: Velocity }) {
+export function VelocityBadge({ v }: { v: Velocity | undefined }) {
   if (!v) return null;
   return <span className={`whitespace-nowrap rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${V[v].cls}`}>{V[v].label}</span>;
 }
@@ -30,7 +30,7 @@ export function ScoreBadge({ score }: { score: number }) {
   return <span className={`font-mono text-xs font-semibold tabular-nums ${cls}`}>{score}/100</span>;
 }
 
-export function CuratorBadge({ curator }: { curator?: Curator }) {
+export function CuratorBadge({ curator }: { curator?: Curator | undefined }) {
   if (!curator) return null;
   return (
     <span className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground" title="Curated on Xtrnd">
