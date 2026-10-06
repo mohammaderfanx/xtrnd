@@ -2,7 +2,7 @@ import { Bookmark, BookmarkCheck, Eye, Heart, Repeat2, ArrowUpRight } from "luci
 import { fmt, metricsOf, type Curator, type Item, type Velocity } from "@/lib/xtrnd";
 import { Avatar, CuratorBadge, ScoreBadge, ShareMenu, VelocityBadge } from "./ItemBits";
 
-type Props = { item: Item; saved: boolean; onToggle: () => void; velocity?: Velocity; curator?: Curator };
+type Props = { item: Item; saved: boolean; onToggle: () => void; velocity?: Velocity | undefined; curator?: Curator | undefined };
 
 export function TrendCard({ item, saved, onToggle, velocity = null, curator }: Props) {
   const m = metricsOf(item);
