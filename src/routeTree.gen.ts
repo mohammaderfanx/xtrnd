@@ -14,6 +14,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as CuratorsRouteImport } from './routes/curators'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as ApiPublicV1FeedRouteImport } from './routes/api/public/v1/feed'
+import { Route as ApiPublicV1TrendingRouteImport } from './routes/api/public/v1/trending'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,16 @@ const SubmitRoute = SubmitRouteImport.update({
   path: '/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV1FeedRoute = ApiPublicV1FeedRouteImport.update({
+  id: '/api/public/v1/feed',
+  path: '/api/public/v1/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1TrendingRoute = ApiPublicV1TrendingRouteImport.update({
+  id: '/api/public/v1/trending',
+  path: '/api/public/v1/trending',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +59,8 @@ export interface FileRoutesByFullPath {
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
   '/submit': typeof SubmitRoute
+  '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
+  '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +68,8 @@ export interface FileRoutesByTo {
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
   '/submit': typeof SubmitRoute
+  '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
+  '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +78,37 @@ export interface FileRoutesById {
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
   '/submit': typeof SubmitRoute
+  '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
+  '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/bookmarks' | '/curators' | '/submit'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/bookmarks'
+    | '/curators'
+    | '/submit'
+    | '/api/public/v1/feed'
+    | '/api/public/v1/trending'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/bookmarks' | '/curators' | '/submit'
-  id: '__root__' | '/' | '/auth' | '/bookmarks' | '/curators' | '/submit'
+  to:
+    | '/'
+    | '/auth'
+    | '/bookmarks'
+    | '/curators'
+    | '/submit'
+    | '/api/public/v1/feed'
+    | '/api/public/v1/trending'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/bookmarks'
+    | '/curators'
+    | '/submit'
+    | '/api/public/v1/feed'
+    | '/api/public/v1/trending'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +117,8 @@ export interface RootRouteChildren {
   BookmarksRoute: typeof BookmarksRoute
   CuratorsRoute: typeof CuratorsRoute
   SubmitRoute: typeof SubmitRoute
+  ApiPublicV1FeedRoute: typeof ApiPublicV1FeedRoute
+  ApiPublicV1TrendingRoute: typeof ApiPublicV1TrendingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/feed': {
+      id: '/api/public/v1/feed'
+      path: '/api/public/v1/feed'
+      fullPath: '/api/public/v1/feed'
+      preLoaderRoute: typeof ApiPublicV1FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/trending': {
+      id: '/api/public/v1/trending'
+      path: '/api/public/v1/trending'
+      fullPath: '/api/public/v1/trending'
+      preLoaderRoute: typeof ApiPublicV1TrendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +181,8 @@ const rootRouteChildren: RootRouteChildren = {
   BookmarksRoute: BookmarksRoute,
   CuratorsRoute: CuratorsRoute,
   SubmitRoute: SubmitRoute,
+  ApiPublicV1FeedRoute: ApiPublicV1FeedRoute,
+  ApiPublicV1TrendingRoute: ApiPublicV1TrendingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
