@@ -13,6 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as CuratorsRouteImport } from './routes/curators'
+import { Route as DevelopersRouteImport } from './routes/developers'
+import { Route as DigestRouteImport } from './routes/digest'
+import { Route as FeedsRouteImport } from './routes/feeds'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as ApiPublicV1FeedRouteImport } from './routes/api/public/v1/feed'
 import { Route as ApiPublicV1TrendingRouteImport } from './routes/api/public/v1/trending'
@@ -37,6 +41,26 @@ const CuratorsRoute = CuratorsRouteImport.update({
   path: '/curators',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevelopersRoute = DevelopersRouteImport.update({
+  id: '/developers',
+  path: '/developers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DigestRoute = DigestRouteImport.update({
+  id: '/digest',
+  path: '/digest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedsRoute = FeedsRouteImport.update({
+  id: '/feeds',
+  path: '/feeds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubmitRoute = SubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
@@ -58,6 +82,10 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
+  '/developers': typeof DevelopersRoute
+  '/digest': typeof DigestRoute
+  '/feeds': typeof FeedsRoute
+  '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
@@ -67,6 +95,10 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
+  '/developers': typeof DevelopersRoute
+  '/digest': typeof DigestRoute
+  '/feeds': typeof FeedsRoute
+  '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
@@ -77,6 +109,10 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
+  '/developers': typeof DevelopersRoute
+  '/digest': typeof DigestRoute
+  '/feeds': typeof FeedsRoute
+  '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
@@ -88,6 +124,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/bookmarks'
     | '/curators'
+    | '/developers'
+    | '/digest'
+    | '/feeds'
+    | '/pricing'
     | '/submit'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
@@ -97,6 +137,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/bookmarks'
     | '/curators'
+    | '/developers'
+    | '/digest'
+    | '/feeds'
+    | '/pricing'
     | '/submit'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
@@ -106,6 +150,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/bookmarks'
     | '/curators'
+    | '/developers'
+    | '/digest'
+    | '/feeds'
+    | '/pricing'
     | '/submit'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
@@ -116,6 +164,10 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BookmarksRoute: typeof BookmarksRoute
   CuratorsRoute: typeof CuratorsRoute
+  DevelopersRoute: typeof DevelopersRoute
+  DigestRoute: typeof DigestRoute
+  FeedsRoute: typeof FeedsRoute
+  PricingRoute: typeof PricingRoute
   SubmitRoute: typeof SubmitRoute
   ApiPublicV1FeedRoute: typeof ApiPublicV1FeedRoute
   ApiPublicV1TrendingRoute: typeof ApiPublicV1TrendingRoute
@@ -151,6 +203,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CuratorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/developers': {
+      id: '/developers'
+      path: '/developers'
+      fullPath: '/developers'
+      preLoaderRoute: typeof DevelopersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/digest': {
+      id: '/digest'
+      path: '/digest'
+      fullPath: '/digest'
+      preLoaderRoute: typeof DigestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feeds': {
+      id: '/feeds'
+      path: '/feeds'
+      fullPath: '/feeds'
+      preLoaderRoute: typeof FeedsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/submit': {
       id: '/submit'
       path: '/submit'
@@ -180,6 +260,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BookmarksRoute: BookmarksRoute,
   CuratorsRoute: CuratorsRoute,
+  DevelopersRoute: DevelopersRoute,
+  DigestRoute: DigestRoute,
+  FeedsRoute: FeedsRoute,
+  PricingRoute: PricingRoute,
   SubmitRoute: SubmitRoute,
   ApiPublicV1FeedRoute: ApiPublicV1FeedRoute,
   ApiPublicV1TrendingRoute: ApiPublicV1TrendingRoute,
