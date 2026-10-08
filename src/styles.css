@@ -33,6 +33,9 @@
   --color-signal: var(--signal);
   --color-hot: var(--hot);
   --color-rising: var(--rising);
+  --color-pro: var(--pro);
+  --color-pro-foreground: var(--pro-foreground);
+  --font-serif: "Newsreader", Georgia, serif;
 }
 
 /* Dark by default: neutral-950 canvas, neutral-800 grid lines, lime signal accent */
@@ -60,6 +63,8 @@
   --signal: oklch(0.78 0.17 160);
   --hot: oklch(0.72 0.19 40);
   --rising: oklch(0.82 0.16 80);
+  --pro: oklch(0.68 0.19 285);
+  --pro-foreground: oklch(0.98 0 0);
 }
 
 @layer base {
@@ -78,4 +83,10 @@
     linear-gradient(90deg, var(--border) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at top, black 20%, transparent 70%);
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+  backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in oklab, var(--pro) 25%, var(--border));
 }
