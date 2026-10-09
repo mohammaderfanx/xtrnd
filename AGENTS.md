@@ -11,3 +11,6 @@
 
 - X.com link unfurling runs in a server function calling the keyless fxtwitter API; no X API key is stored, so swapping to the official API only touches src/lib/unfurl.functions.ts.
 - Velocity labels (Viral/Rising/Evergreen) are computed client-side from item_analytics_history snapshots; ranking uses the `rank_score` computed column backed by `calculate_engagement_score`.
+- Pro gating is enforced in the database: `is_pro()` backs RLS on custom_signal_feeds/api_keys, `consume_ai_credit()` meters free AI use, and `api_authorize()` does API key auth + per-minute rate limiting (no Redis).
+- Plan changes currently go through the demo `setDemoPlan` server function; real payments should write user_subscriptions instead and that function should be removed.
+- AI summaries are generated in src/lib/ai.server.ts and cached in ai_item_insights, which only the server writes.
