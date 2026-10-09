@@ -9,7 +9,7 @@ import { CATEGORIES, TYPES, itemsQuery } from "@/lib/xtrnd";
 
 const CAT_ALIASES: Record<string, string> = { ai: "AI & Tech", tech: "AI & Tech", saas: "SaaS & Startups", startups: "SaaS & Startups", design: "Design & UX", ux: "Design & UX", finance: "Finance", crypto: "Crypto" };
 function parseCommand(q: string) {
-  const out: { type?: string; category?: string; q?: string } = {};
+  const out: { type?: string | undefined; category?: string | undefined; q?: string } = {};
   const rest: string[] = [];
   for (const tok of q.trim().split(/\s+/)) {
     const m = tok.match(/^\/(type|cat):(\S+)$/i);
