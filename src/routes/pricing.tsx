@@ -40,7 +40,7 @@ const MATRIX: [string, string | boolean, string | boolean, string | boolean][] =
 function Cell({ v }: { v: string | boolean }) {
   if (v === true) return <Check className="mx-auto h-4 w-4 text-signal" />;
   if (v === false) return <Minus className="mx-auto h-4 w-4 text-muted-foreground/50" />;
-  return <span className="font-mono text-xs">{v}</span>;
+  return <span className="block text-center font-mono text-xs">{v}</span>;
 }
 
 function Pricing() {

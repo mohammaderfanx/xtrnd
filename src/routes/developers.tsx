@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { KeyRound, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,7 +31,8 @@ function Developers() {
     queryKey: ["api-keys", session?.user.id], enabled: !!session,
     queryFn: async () => (await supabase.from("api_keys").select("id, name, key_prefix, rate_limit_per_min, last_used_at, created_at").order("created_at", { ascending: false })).data ?? [],
   });
-  const origin = typeof window === "undefined" ? "https://your-app" : window.location.origin;
+  const [origin, setOrigin] = useState("https://your-app");
+  useEffect(() => setOrigin(window.location.origin), []);
 
   const make = async () => {
     const r = await create({ data: { name: name || "Default key" } });
