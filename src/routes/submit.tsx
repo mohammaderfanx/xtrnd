@@ -6,6 +6,7 @@ import { X, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { unfurlX, type Unfurled } from "@/lib/unfurl.functions";
+import { dispatchFeeds } from "@/lib/pro.functions";
 import { Avatar } from "@/components/ItemBits";
 import { CATEGORIES, TYPES, detectType, fmt, useSession, type Category, type Item, type ItemType } from "@/lib/xtrnd";
 
@@ -30,6 +31,7 @@ function Submit() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const unfurl = useServerFn(unfurlX);
+  const dispatch = useServerFn(dispatchFeeds);
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<Category>("AI & Tech");
   const [type, setType] = useState<ItemType | "auto">("auto");
@@ -75,6 +77,7 @@ function Submit() {
     toast.success("Indexed. It's live on Xtrnd.");
     supabase.from("trending_items").insert(row).then(({ error }) => {
       if (error) { qc.setQueryData(["items"], prev); toast.error(`Submission failed: ${error.message}`); }
+      else dispatch({ data: { itemId: row.id } }).catch(() => {});
       qc.invalidateQueries({ queryKey: ["items"] });
       qc.invalidateQueries({ queryKey: ["history"] });
       qc.invalidateQueries({ queryKey: ["curators"] });

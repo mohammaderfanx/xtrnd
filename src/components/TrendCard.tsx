@@ -2,9 +2,9 @@ import { Bookmark, BookmarkCheck, Eye, Heart, Repeat2, ArrowUpRight } from "luci
 import { fmt, metricsOf, type Curator, type Item, type Velocity } from "@/lib/xtrnd";
 import { Avatar, CuratorBadge, ScoreBadge, ShareMenu, VelocityBadge } from "./ItemBits";
 
-type Props = { item: Item; saved: boolean; onToggle: () => void; velocity?: Velocity | undefined; curator?: Curator | undefined };
+type Props = { item: Item; saved: boolean; onToggle: () => void; velocity?: Velocity | undefined; curator?: Curator | undefined; onOpen?: (() => void) | undefined };
 
-export function TrendCard({ item, saved, onToggle, velocity = null, curator }: Props) {
+export function TrendCard({ item, saved, onToggle, velocity = null, curator, onOpen }: Props) {
   const m = metricsOf(item);
   const social = item.type !== "Account" && item.type !== "Community";
   return (
@@ -22,7 +22,8 @@ export function TrendCard({ item, saved, onToggle, velocity = null, curator }: P
         </div>
         <VelocityBadge v={velocity} />
       </div>
-      <p className="line-clamp-5 min-h-[3lh] flex-1 text-[15px] leading-relaxed text-foreground/90">{item.title_or_snippet.slice(0, 280)}</p>
+      <button onClick={onOpen} className="flex-1 text-left"><p className="line-clamp-5 min-h-[3lh] text-[15px] leading-relaxed text-foreground/90 hover:text-foreground">{item.title_or_snippet.slice(0, 280)}</p>
+        <span className="mt-2 inline-flex items-center gap-1 font-mono text-[11px] text-pro">⚡ AI Synthesis · open reader</span></button>
       <div className="flex items-center gap-4 font-mono text-xs text-muted-foreground">
         <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{fmt(m.views)}</span>
         {social && <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5" />{fmt(m.likes)}</span>}
@@ -44,7 +45,7 @@ export function TrendCard({ item, saved, onToggle, velocity = null, curator }: P
   );
 }
 
-export function TerminalRow({ item, saved, onToggle, velocity = null, curator, rank }: Props & { rank: number }) {
+export function TerminalRow({ item, saved, onToggle, velocity = null, curator, rank, onOpen }: Props & { rank: number }) {
   const m = metricsOf(item);
   return (
     <div className="grid grid-cols-[2rem_1fr_auto] items-center gap-3 border-b px-3 py-2 font-mono text-xs transition-colors last:border-b-0 hover:bg-card md:grid-cols-[2rem_9rem_1fr_6.5rem_4.5rem_4.5rem_4.5rem_3.5rem_auto]">
@@ -52,10 +53,10 @@ export function TerminalRow({ item, saved, onToggle, velocity = null, curator, r
       <a href={item.external_url} target="_blank" rel="noopener noreferrer" className="hidden min-w-0 items-center gap-2 md:flex">
         <Avatar src={item.author_avatar} size={18} /><span className="truncate text-foreground">{item.author_handle}</span>
       </a>
-      <a href={item.external_url} target="_blank" rel="noopener noreferrer" className="min-w-0 truncate font-sans text-[13px] text-foreground/90 hover:text-foreground">
+      <button onClick={onOpen} className="min-w-0 truncate text-left font-sans text-[13px] text-foreground/90 hover:text-foreground">
         <span className="mr-2 text-muted-foreground">[{item.type}]</span>{item.title_or_snippet}
         {curator && <span className="ml-2 text-muted-foreground">· via {curator.handle}</span>}
-      </a>
+      </button>
       <span className="hidden md:block"><VelocityBadge v={velocity} /></span>
       <span className="hidden text-right tabular-nums text-muted-foreground md:block">{fmt(m.views)}</span>
       <span className="hidden text-right tabular-nums text-muted-foreground md:block">{fmt(m.likes)}</span>
