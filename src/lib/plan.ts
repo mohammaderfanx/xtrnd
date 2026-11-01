@@ -18,7 +18,7 @@ export function usePlan() {
         supabase.from("ai_usage").select("count").eq("day", today).maybeSingle(),
       ]);
       const active = sub && ["active", "trialing"].includes(sub.status) && (!sub.current_period_end || new Date(sub.current_period_end) > new Date());
-      const tier: Tier = active ? sub!.plan_tier : "Free";
+      const tier: Tier = active && sub ? sub.plan_tier : "Free";
       return { tier, sub, aiUsed: usage?.count ?? 0 };
     },
   });

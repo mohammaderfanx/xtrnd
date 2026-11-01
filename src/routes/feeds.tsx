@@ -101,8 +101,8 @@ function Feeds() {
           </div>
         </div>
       ) : (
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr]">
-          <section className="space-y-4 rounded-lg border bg-card p-5">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <section className="min-w-0 space-y-4 rounded-lg border bg-card p-5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Templates</span>
               {TEMPLATES.map((t) => <button key={t.name} onClick={() => loadTemplate(t)} className={chip(false)}>{t.name}</button>)}
@@ -131,7 +131,7 @@ function Feeds() {
             </div>
           </section>
 
-          <section className="space-y-3">
+          <section className="min-w-0 space-y-3">
             {feeds.length === 0 && <p className="rounded-lg border p-8 text-center text-sm text-muted-foreground">No feeds yet. Start from a template.</p>}
             {feeds.map((f) => {
               const r = f.filter_rules as Rules;
@@ -147,7 +147,7 @@ function Feeds() {
                     )}
                     <button aria-label="Delete feed" onClick={() => remove(f.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                   </div>
-                  <div className="mt-1 font-mono text-[11px] text-muted-foreground">
+                  <div className="mt-1 break-words font-mono text-[11px] text-muted-foreground">
                     {[r.keywords?.length && `${r.match === "all" ? "ALL" : "ANY"}(${r.keywords.join(", ")})`, r.exclude?.length && `NOT(${r.exclude.join(", ")})`,
                       r.categories?.length && r.categories.join("/"), r.types?.length && r.types.join("/"), r.min_engagement && `score ≥ ${r.min_engagement}`].filter(Boolean).join(" · ") || "Everything"}
                   </div>
