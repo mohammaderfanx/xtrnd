@@ -69,6 +69,8 @@ export const createApiKey = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ name: z.string().trim().min(1).max(60) }).parse(d))
   .handler(async ({ data, context }) => {
+    const { data: pro } = await context.supabase.rpc("is_pro", { _uid: context.userId });
+    if (!pro) return { ok: false as const, error: "API keys require Pro." };
     const bytes = crypto.getRandomValues(new Uint8Array(24));
     const raw = "xt_" + Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
     const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw))), (b) => b.toString(16).padStart(2, "0")).join("");
@@ -98,6 +100,8 @@ export const testWebhook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ feedId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
+    const { data: pro } = await context.supabase.rpc("is_pro", { _uid: context.userId });
+    if (!pro) return { ok: false, error: "Webhook alerts require an active Pro plan" };
     const { data: feed } = await context.supabase.from("custom_signal_feeds").select("*").eq("id", data.feedId).maybeSingle();
     if (!feed?.webhook_url) return { ok: false, error: "No webhook set" };
     if (!validWebhook(feed.webhook_url)) return { ok: false, error: "Only Discord or Slack webhook links are allowed" };
@@ -113,7 +117,9 @@ export const testWebhook = createServerFn({ method: "POST" })
 export const dispatchFeeds = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ itemId: z.string().uuid() }).parse(d))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: claimed, error } = await context.supabase.rpc("claim_signal_dispatch", { p_item_id: data.itemId });
+    if (error || !claimed) return { sent: 0 };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: item } = await supabaseAdmin.from("trending_items").select("*").eq("id", data.itemId).maybeSingle();
     if (!item || Date.now() - new Date(item.created_at).getTime() > 10 * 60e3) return { sent: 0 };
