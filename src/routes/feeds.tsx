@@ -13,6 +13,8 @@ import { ProBadge, ProGate } from "@/components/ProBadge";
 export const Route = createFileRoute("/feeds")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Signal Feeds — Xtrnd Pro" },
       { name: "description", content: "Build custom X.com signal feeds with keyword logic and score thresholds, delivered to Discord or Slack." },
       { property: "og:title", content: "Signal Feeds — Xtrnd Pro" },
@@ -58,9 +60,10 @@ function Feeds() {
   };
 
   const save = async () => {
+    if (!session) { toast.error("Sign in to save a feed"); return; }
     if (!name.trim()) { toast.error("Name your feed"); return; }
     if (hook && !/^https:\/\/(discord(app)?\.com\/api\/webhooks|hooks\.slack\.com)\//.test(hook)) { toast.error("Use a Discord or Slack webhook link"); return; }
-    const { error } = await supabase.from("custom_signal_feeds").insert({ user_id: session!.user.id, name: name.trim(), filter_rules: draft, webhook_url: hook || null });
+    const { error } = await supabase.from("custom_signal_feeds").insert({ user_id: session.user.id, name: name.trim(), filter_rules: draft, webhook_url: hook || null });
     if (error) { toast.error(error.message.includes("row-level") ? "Signal Feeds require Pro." : error.message); return; }
     toast.success("Feed saved"); setName(""); setKw(""); setEx(""); setHd(""); setHook(""); setRules(EMPTY);
     qc.invalidateQueries({ queryKey: ["feeds"] });

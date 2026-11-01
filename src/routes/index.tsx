@@ -15,6 +15,8 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Xtrnd — Discover the best of X.com, zero noise" },
       { name: "description", content: "Curated, high-signal discovery of top-performing X posts, threads, accounts, media and communities." },
       { property: "og:title", content: "Xtrnd — Discover the best of X.com, zero noise" },

@@ -12,6 +12,8 @@ import { ProBadge, ProGate } from "@/components/ProBadge";
 export const Route = createFileRoute("/developers")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Developer API — Xtrnd" },
       { name: "description", content: "Query Xtrnd's high-signal X.com database programmatically with API keys and per-minute rate limits." },
       { property: "og:title", content: "Developer API — Xtrnd" },
