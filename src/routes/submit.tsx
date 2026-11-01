@@ -40,24 +40,33 @@ function Submit() {
   const [note, setNote] = useState("");
   const [meta, setMeta] = useState<Unfurled | null>(null);
   const [looking, setLooking] = useState(false);
-  const last = useRef("");
+  const requestVersion = useRef(0);
 
   useEffect(() => {
     const u = url.trim();
-    if (!/^https?:\/\/(www\.)?(x|twitter)\.com\/\S+/.test(u) || u === last.current) return;
+    const version = ++requestVersion.current;
+    setMeta(null);
+    setNote("");
+    setType("auto");
+    setLooking(false);
+    if (!/^https?:\/\/(www\.)?(x|twitter)\.com\/\S+/.test(u)) return;
+    setLooking(true);
     const t = setTimeout(async () => {
-      last.current = u; setLooking(true);
       try {
         const r = await unfurl({ data: { url: u } });
+        if (version !== requestVersion.current) return;
         if (r.ok) { setMeta(r.item); setNote(r.item.text); setType(r.item.type); }
         else { setMeta(null); toast.message(r.error); }
-      } finally { setLooking(false); }
+      } catch {
+        if (version === requestVersion.current) toast.error("Couldn't read this link. You can enter its details manually.");
+      } finally { if (version === requestVersion.current) setLooking(false); }
     }, 350);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); requestVersion.current++; };
   }, [url, unfurl]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!ready || !session || looking) return;
     let u: URL;
     try { u = new URL(url); } catch { toast.error("Enter a valid URL"); return; }
     if (!/(^|\.)(x|twitter)\.com$/.test(u.hostname)) { toast.error("Only x.com or twitter.com links"); return; }
@@ -70,7 +79,7 @@ function Submit() {
       author_avatar: meta?.author_avatar ?? `https://unavatar.io/x/${handle.slice(1)}`,
       title_or_snippet: note.trim() || `Submitted from ${handle}`,
       metrics: { ...m, engagement_score: toScore(m) },
-      submitted_by: session!.user.id,
+      submitted_by: session.user.id,
     };
     // Optimistic: show it in the feed immediately, roll back on failure.
     const prev = qc.getQueryData<Item[]>(["items"]);
@@ -94,7 +103,7 @@ function Submit() {
           <h1 className="text-lg font-semibold">Submit to Xtrnd</h1>
           <Link to="/" aria-label="Close" className="text-muted-foreground hover:text-foreground"><X className="h-5 w-5" /></Link>
         </div>
-        {ready && !session ? (
+        {!ready ? <Loader2 aria-label="Loading account" className="mt-6 h-5 w-5 animate-spin text-muted-foreground" /> : !session ? (
           <p className="mt-6 text-sm text-muted-foreground">
             <Link to="/auth" className="text-signal hover:underline">Sign in</Link> to submit links.
           </p>
