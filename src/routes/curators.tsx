@@ -6,6 +6,8 @@ import { curatorsQuery, fmt, itemsQuery, metricsOf, savesQuery } from "@/lib/xtr
 export const Route = createFileRoute("/curators")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Curator Leaderboard — Xtrnd" },
       { name: "description", content: "Top Xtrnd curators surfacing the highest-signal content on X.com." },
       { property: "og:title", content: "Curator Leaderboard — Xtrnd" },

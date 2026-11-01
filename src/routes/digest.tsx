@@ -5,11 +5,15 @@ import { Check, Copy, Code2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { fmt, itemsQuery, metricsOf, type Item } from "@/lib/xtrnd";
+import { Button } from "@/components/ui/button";
+import { canExportDigest, toggleDigestItem } from "@/lib/digest-selection";
 import type { Database } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/digest")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Signal Digest — Xtrnd" },
       { name: "description", content: "Turn 5–10 top X.com items into a ready-to-send newsletter draft in Markdown or HTML." },
       { property: "og:title", content: "Signal Digest — Xtrnd" },
@@ -65,7 +69,8 @@ function Digest() {
 
   const chosen = picked.map((id) => items.find((i) => i.id === id)).filter(Boolean) as Item[];
   const output = mode === "md" ? buildMarkdown(title, intro, chosen, insights) : buildHtml(title, intro, chosen, insights);
-  const toggle = (id: string) => setPicked((p) => p.includes(id) ? p.filter((x) => x !== id) : p.length >= 10 ? (toast("Max 10 items"), p) : [...p, id]);
+  const exportReady = canExportDigest(chosen.length);
+  const toggle = (id: string) => setPicked((p) => toggleDigestItem(p, id));
   const autopick = () => setPicked(sorted.slice(0, 5).map((i) => i.id));
 
   return (
@@ -100,13 +105,13 @@ function Digest() {
             <div className="flex rounded-md border p-0.5 font-mono text-xs">
               {(["md", "html"] as const).map((m) => <button key={m} onClick={() => setMode(m)} className={`rounded-sm px-3 py-1.5 ${mode === m ? "bg-accent text-foreground" : "text-muted-foreground"}`}>{m === "md" ? "Markdown" : "HTML email"}</button>)}
             </div>
-            <button disabled={!chosen.length} onClick={async () => { await navigator.clipboard.writeText(output); toast.success("Draft copied"); }}
+            <Button disabled={!exportReady} onClick={async () => { await navigator.clipboard.writeText(output); toast.success("Draft copied"); }}
               className="ml-auto flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
               {mode === "md" ? <Copy className="h-4 w-4" /> : <Code2 className="h-4 w-4" />}Copy {mode === "md" ? "Markdown" : "HTML"}
-            </button>
+            </Button>
           </div>
-          {!chosen.length ? (
-            <div className="grid h-96 place-items-center rounded-lg border font-mono text-xs text-muted-foreground">Select items to generate your draft</div>
+          {!exportReady ? (
+            <div className="grid h-96 place-items-center rounded-lg border font-mono text-xs text-muted-foreground">{chosen.length ? `${5 - chosen.length} more items needed` : "Select at least 5 items to generate your draft"}</div>
           ) : mode === "md" ? (
             <pre className="h-[60vh] overflow-auto whitespace-pre-wrap rounded-lg border bg-card p-4 font-mono text-xs leading-relaxed">{output}</pre>
           ) : (

@@ -221,6 +221,29 @@ export type Database = {
           },
         ]
       }
+      signal_dispatch_claims: {
+        Row: {
+          claimed_at: string
+          item_id: string
+        }
+        Insert: {
+          claimed_at?: string
+          item_id: string
+        }
+        Update: {
+          claimed_at?: string
+          item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signal_dispatch_claims_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "trending_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trending_items: {
         Row: {
           author_avatar: string | null
@@ -338,6 +361,7 @@ export type Database = {
           status: number
         }[]
       }
+      api_plan_limit: { Args: { _uid: string }; Returns: number }
       bookmark_counts: {
         Args: never
         Returns: {
@@ -354,6 +378,7 @@ export type Database = {
         }
         Returns: number
       }
+      claim_signal_dispatch: { Args: { p_item_id: string }; Returns: boolean }
       consume_ai_credit: { Args: never; Returns: number }
       is_pro: { Args: { _uid: string }; Returns: boolean }
       rank_score: {

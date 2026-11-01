@@ -14,3 +14,6 @@
 - Pro gating is enforced in the database: `is_pro()` backs RLS on custom_signal_feeds/api_keys, `consume_ai_credit()` meters free AI use, and `api_authorize()` does API key auth + per-minute rate limiting (no Redis).
 - Plan changes currently go through the demo `setDemoPlan` server function; real payments should write user_subscriptions instead and that function should be removed.
 - AI summaries are generated in src/lib/ai.server.ts and cached in ai_item_insights, which only the server writes.
+- API limits are assigned and revalidated from active subscriptions in database functions and triggers, so direct key inserts and plan changes cannot bypass tier limits.
+- Alert dispatch must claim each fresh item through an owner-checked database function before privileged webhook delivery, preventing cross-user and repeated dispatch.
+- Digest selection bounds live in a browser-safe helper shared by the page and tests, keeping export eligibility consistent.

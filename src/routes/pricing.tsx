@@ -11,6 +11,8 @@ import { ProBadge } from "@/components/ProBadge";
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Pricing — Xtrnd Pro" },
       { name: "description", content: "Free, Pro ($19/mo) and Enterprise plans: AI thread summaries, custom signal feeds, exports and API access." },
       { property: "og:title", content: "Pricing — Xtrnd Pro" },

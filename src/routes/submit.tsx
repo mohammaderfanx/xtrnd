@@ -13,6 +13,8 @@ import { CATEGORIES, TYPES, detectType, fmt, useSession, type Category, type Ite
 export const Route = createFileRoute("/submit")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Submit a link — Xtrnd" },
       { name: "description", content: "Add a high-value X post, thread or account to Xtrnd." },
       { property: "og:title", content: "Submit a link — Xtrnd" },

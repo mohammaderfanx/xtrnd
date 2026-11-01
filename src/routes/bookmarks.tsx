@@ -7,6 +7,8 @@ import { itemsQuery } from "@/lib/xtrnd";
 export const Route = createFileRoute("/bookmarks")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Saved — Xtrnd" },
       { name: "description", content: "Your bookmarked X posts, threads and accounts on Xtrnd." },
       { property: "og:title", content: "Saved — Xtrnd" },
