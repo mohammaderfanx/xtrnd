@@ -14,6 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_hits: {
+        Row: {
+          agent_id: string
+          created_at: string
+          item_id: string
+          similarity: number
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          item_id: string
+          similarity: number
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          item_id?: string
+          similarity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_hits_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_hits_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "trending_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_runs: {
+        Row: {
+          agent_id: string
+          hits: number
+          id: string
+          log: string | null
+          precision: number | null
+          scanned: number
+          started_at: string
+          status: string
+        }
+        Insert: {
+          agent_id: string
+          hits?: number
+          id?: string
+          log?: string | null
+          precision?: number | null
+          scanned?: number
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          agent_id?: string
+          hits?: number
+          id?: string
+          log?: string | null
+          precision?: number | null
+          scanned?: number
+          started_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_runs_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_agents: {
+        Row: {
+          created_at: string
+          criteria_config: Json
+          embedded_query: string | null
+          id: string
+          is_active: boolean
+          last_run_at: string | null
+          name: string
+          query_embedding: string | null
+          system_prompt: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          criteria_config?: Json
+          embedded_query?: string | null
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name: string
+          query_embedding?: string | null
+          system_prompt?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          criteria_config?: Json
+          embedded_query?: string | null
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name?: string
+          query_embedding?: string | null
+          system_prompt?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_item_insights: {
         Row: {
           actionable_quotes: Json
@@ -129,6 +245,30 @@ export type Database = {
           },
         ]
       }
+      audio_briefs: {
+        Row: {
+          created_at: string
+          day: string
+          item_ids: string[]
+          script: string
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          item_ids: string[]
+          script: string
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          item_ids?: string[]
+          script?: string
+          storage_path?: string
+        }
+        Relationships: []
+      }
       curator_profiles: {
         Row: {
           created_at: string
@@ -183,6 +323,32 @@ export type Database = {
         }
         Relationships: []
       }
+      embedding_queue: {
+        Row: {
+          attempts: number
+          enqueued_at: string
+          item_id: string
+        }
+        Insert: {
+          attempts?: number
+          enqueued_at?: string
+          item_id: string
+        }
+        Update: {
+          attempts?: number
+          enqueued_at?: string
+          item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "embedding_queue_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "trending_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       item_analytics_history: {
         Row: {
           engagement_score: number
@@ -220,6 +386,146 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      item_annotations: {
+        Row: {
+          author_id: string
+          comment_text: string
+          created_at: string
+          id: string
+          item_id: string
+          tags: string[]
+          workspace_id: string
+        }
+        Insert: {
+          author_id: string
+          comment_text?: string
+          created_at?: string
+          id?: string
+          item_id: string
+          tags?: string[]
+          workspace_id: string
+        }
+        Update: {
+          author_id?: string
+          comment_text?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          tags?: string[]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_annotations_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "trending_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "item_annotations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      item_embeddings: {
+        Row: {
+          content_chunk: string
+          created_at: string
+          embedding: string
+          item_id: string
+        }
+        Insert: {
+          content_chunk: string
+          created_at?: string
+          embedding: string
+          item_id: string
+        }
+        Update: {
+          content_chunk?: string
+          created_at?: string
+          embedding?: string
+          item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_embeddings_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "trending_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_leases: {
+        Row: {
+          locked_until: string
+          name: string
+        }
+        Insert: {
+          locked_until: string
+          name: string
+        }
+        Update: {
+          locked_until?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      kg_edges: {
+        Row: {
+          relation: string
+          source: string
+          target: string
+        }
+        Insert: {
+          relation: string
+          source: string
+          target: string
+        }
+        Update: {
+          relation?: string
+          source?: string
+          target?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kg_edges_source_fkey"
+            columns: ["source"]
+            isOneToOne: false
+            referencedRelation: "kg_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kg_edges_target_fkey"
+            columns: ["target"]
+            isOneToOne: false
+            referencedRelation: "kg_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kg_nodes: {
+        Row: {
+          id: string
+          kind: string
+          label: string
+        }
+        Insert: {
+          id: string
+          kind: string
+          label: string
+        }
+        Update: {
+          id?: string
+          kind?: string
+          label?: string
+        }
+        Relationships: []
       }
       signal_dispatch_claims: {
         Row: {
@@ -346,11 +652,68 @@ export type Database = {
         }
         Relationships: []
       }
+      workspace_members: {
+        Row: {
+          email: string | null
+          role: Database["public"]["Enums"]["workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          email?: string | null
+          role?: Database["public"]["Enums"]["workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          email?: string | null
+          role?: Database["public"]["Enums"]["workspace_role"]
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          stripe_subscription_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+          stripe_subscription_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          stripe_subscription_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      acquire_lease: {
+        Args: { p_name: string; p_seconds: number }
+        Returns: boolean
+      }
       api_authorize: {
         Args: { p_hash: string }
         Returns: {
@@ -380,12 +743,46 @@ export type Database = {
       }
       claim_signal_dispatch: { Args: { p_item_id: string }; Returns: boolean }
       consume_ai_credit: { Args: never; Returns: number }
+      hybrid_search: {
+        Args: {
+          item_types?: Database["public"]["Enums"]["item_type"][]
+          match_count?: number
+          query_embedding: string
+          query_text: string
+          since?: string
+        }
+        Returns: {
+          item_id: string
+          score: number
+          similarity: number
+          text_rank: number
+        }[]
+      }
+      invite_workspace_member: {
+        Args: {
+          p_email: string
+          p_role: Database["public"]["Enums"]["workspace_role"]
+          p_ws: string
+        }
+        Returns: boolean
+      }
       is_pro: { Args: { _uid: string }; Returns: boolean }
       rank_score: {
         Args: { "": Database["public"]["Tables"]["trending_items"]["Row"] }
         Returns: {
           error: true
         } & "the function public.rank_score with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
+      }
+      similar_items: {
+        Args: { match_count?: number; p_item_id: string }
+        Returns: {
+          item_id: string
+          similarity: number
+        }[]
+      }
+      workspace_role_of: {
+        Args: { _uid: string; _ws: string }
+        Returns: Database["public"]["Enums"]["workspace_role"]
       }
     }
     Enums: {
@@ -397,6 +794,7 @@ export type Database = {
         | "Crypto"
       item_type: "Post" | "Account" | "Community" | "Thread" | "Media"
       plan_tier: "Free" | "Pro" | "Enterprise"
+      workspace_role: "owner" | "editor" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -533,6 +931,7 @@ export const Constants = {
       ],
       item_type: ["Post", "Account", "Community", "Thread", "Media"],
       plan_tier: ["Free", "Pro", "Enterprise"],
+      workspace_role: ["owner", "editor", "viewer"],
     },
   },
 } as const

@@ -29,6 +29,13 @@
       "when": 1793496051167,
       "tag": "0003_phase3_entitlements_and_dispatch",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793693521922,
+      "tag": "0004_phase4_agents_vectors_workspaces",
+      "breakpoints": true
     }
   ]
 }
