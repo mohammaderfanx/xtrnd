@@ -18,6 +18,7 @@ import { Route as DigestRouteImport } from './routes/digest'
 import { Route as FeedsRouteImport } from './routes/feeds'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as ApiPublicJobsAgentTickRouteImport } from './routes/api/public/jobs/agent-tick'
 import { Route as ApiPublicV1FeedRouteImport } from './routes/api/public/v1/feed'
 import { Route as ApiPublicV1TrendingRouteImport } from './routes/api/public/v1/trending'
 
@@ -66,6 +67,11 @@ const SubmitRoute = SubmitRouteImport.update({
   path: '/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsAgentTickRoute = ApiPublicJobsAgentTickRouteImport.update({
+  id: '/api/public/jobs/agent-tick',
+  path: '/api/public/jobs/agent-tick',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1FeedRoute = ApiPublicV1FeedRouteImport.update({
   id: '/api/public/v1/feed',
   path: '/api/public/v1/feed',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/feeds': typeof FeedsRoute
   '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
+  '/api/public/jobs/agent-tick': typeof ApiPublicJobsAgentTickRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/feeds': typeof FeedsRoute
   '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
+  '/api/public/jobs/agent-tick': typeof ApiPublicJobsAgentTickRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/feeds': typeof FeedsRoute
   '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
+  '/api/public/jobs/agent-tick': typeof ApiPublicJobsAgentTickRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/feeds'
     | '/pricing'
     | '/submit'
+    | '/api/public/jobs/agent-tick'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/feeds'
     | '/pricing'
     | '/submit'
+    | '/api/public/jobs/agent-tick'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/feeds'
     | '/pricing'
     | '/submit'
+    | '/api/public/jobs/agent-tick'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
   fileRoutesById: FileRoutesById
@@ -169,6 +181,7 @@ export interface RootRouteChildren {
   FeedsRoute: typeof FeedsRoute
   PricingRoute: typeof PricingRoute
   SubmitRoute: typeof SubmitRoute
+  ApiPublicJobsAgentTickRoute: typeof ApiPublicJobsAgentTickRoute
   ApiPublicV1FeedRoute: typeof ApiPublicV1FeedRoute
   ApiPublicV1TrendingRoute: typeof ApiPublicV1TrendingRoute
 }
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/agent-tick': {
+      id: '/api/public/jobs/agent-tick'
+      path: '/api/public/jobs/agent-tick'
+      fullPath: '/api/public/jobs/agent-tick'
+      preLoaderRoute: typeof ApiPublicJobsAgentTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/feed': {
       id: '/api/public/v1/feed'
       path: '/api/public/v1/feed'
@@ -265,6 +285,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedsRoute: FeedsRoute,
   PricingRoute: PricingRoute,
   SubmitRoute: SubmitRoute,
+  ApiPublicJobsAgentTickRoute: ApiPublicJobsAgentTickRoute,
   ApiPublicV1FeedRoute: ApiPublicV1FeedRoute,
   ApiPublicV1TrendingRoute: ApiPublicV1TrendingRoute,
 }
