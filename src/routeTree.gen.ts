@@ -10,14 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as CuratorsRouteImport } from './routes/curators'
 import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as DigestRouteImport } from './routes/digest'
 import { Route as FeedsRouteImport } from './routes/feeds'
+import { Route as GraphRouteImport } from './routes/graph'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as ApiPublicJobsAgentTickRouteImport } from './routes/api/public/jobs/agent-tick'
 import { Route as ApiPublicV1FeedRouteImport } from './routes/api/public/v1/feed'
 import { Route as ApiPublicV1TrendingRouteImport } from './routes/api/public/v1/trending'
@@ -25,6 +28,11 @@ import { Route as ApiPublicV1TrendingRouteImport } from './routes/api/public/v1/
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -57,6 +65,11 @@ const FeedsRoute = FeedsRouteImport.update({
   path: '/feeds',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraphRoute = GraphRouteImport.update({
+  id: '/graph',
+  path: '/graph',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -65,6 +78,11 @@ const PricingRoute = PricingRouteImport.update({
 const SubmitRoute = SubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkspaceRoute = WorkspaceRouteImport.update({
+  id: '/workspace',
+  path: '/workspace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicJobsAgentTickRoute = ApiPublicJobsAgentTickRouteImport.update({
@@ -85,28 +103,34 @@ const ApiPublicV1TrendingRoute = ApiPublicV1TrendingRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
   '/developers': typeof DevelopersRoute
   '/digest': typeof DigestRoute
   '/feeds': typeof FeedsRoute
+  '/graph': typeof GraphRoute
   '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
+  '/workspace': typeof WorkspaceRoute
   '/api/public/jobs/agent-tick': typeof ApiPublicJobsAgentTickRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
   '/developers': typeof DevelopersRoute
   '/digest': typeof DigestRoute
   '/feeds': typeof FeedsRoute
+  '/graph': typeof GraphRoute
   '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
+  '/workspace': typeof WorkspaceRoute
   '/api/public/jobs/agent-tick': typeof ApiPublicJobsAgentTickRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
@@ -114,14 +138,17 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
   '/curators': typeof CuratorsRoute
   '/developers': typeof DevelopersRoute
   '/digest': typeof DigestRoute
   '/feeds': typeof FeedsRoute
+  '/graph': typeof GraphRoute
   '/pricing': typeof PricingRoute
   '/submit': typeof SubmitRoute
+  '/workspace': typeof WorkspaceRoute
   '/api/public/jobs/agent-tick': typeof ApiPublicJobsAgentTickRoute
   '/api/public/v1/feed': typeof ApiPublicV1FeedRoute
   '/api/public/v1/trending': typeof ApiPublicV1TrendingRoute
@@ -130,42 +157,51 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agents'
     | '/auth'
     | '/bookmarks'
     | '/curators'
     | '/developers'
     | '/digest'
     | '/feeds'
+    | '/graph'
     | '/pricing'
     | '/submit'
+    | '/workspace'
     | '/api/public/jobs/agent-tick'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agents'
     | '/auth'
     | '/bookmarks'
     | '/curators'
     | '/developers'
     | '/digest'
     | '/feeds'
+    | '/graph'
     | '/pricing'
     | '/submit'
+    | '/workspace'
     | '/api/public/jobs/agent-tick'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
   id:
     | '__root__'
     | '/'
+    | '/agents'
     | '/auth'
     | '/bookmarks'
     | '/curators'
     | '/developers'
     | '/digest'
     | '/feeds'
+    | '/graph'
     | '/pricing'
     | '/submit'
+    | '/workspace'
     | '/api/public/jobs/agent-tick'
     | '/api/public/v1/feed'
     | '/api/public/v1/trending'
@@ -173,14 +209,17 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgentsRoute: typeof AgentsRoute
   AuthRoute: typeof AuthRoute
   BookmarksRoute: typeof BookmarksRoute
   CuratorsRoute: typeof CuratorsRoute
   DevelopersRoute: typeof DevelopersRoute
   DigestRoute: typeof DigestRoute
   FeedsRoute: typeof FeedsRoute
+  GraphRoute: typeof GraphRoute
   PricingRoute: typeof PricingRoute
   SubmitRoute: typeof SubmitRoute
+  WorkspaceRoute: typeof WorkspaceRoute
   ApiPublicJobsAgentTickRoute: typeof ApiPublicJobsAgentTickRoute
   ApiPublicV1FeedRoute: typeof ApiPublicV1FeedRoute
   ApiPublicV1TrendingRoute: typeof ApiPublicV1TrendingRoute
@@ -193,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -237,6 +283,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graph': {
+      id: '/graph'
+      path: '/graph'
+      fullPath: '/graph'
+      preLoaderRoute: typeof GraphRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -249,6 +302,13 @@ declare module '@tanstack/react-router' {
       path: '/submit'
       fullPath: '/submit'
       preLoaderRoute: typeof SubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workspace': {
+      id: '/workspace'
+      path: '/workspace'
+      fullPath: '/workspace'
+      preLoaderRoute: typeof WorkspaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/agent-tick': {
@@ -277,14 +337,17 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgentsRoute: AgentsRoute,
   AuthRoute: AuthRoute,
   BookmarksRoute: BookmarksRoute,
   CuratorsRoute: CuratorsRoute,
   DevelopersRoute: DevelopersRoute,
   DigestRoute: DigestRoute,
   FeedsRoute: FeedsRoute,
+  GraphRoute: GraphRoute,
   PricingRoute: PricingRoute,
   SubmitRoute: SubmitRoute,
+  WorkspaceRoute: WorkspaceRoute,
   ApiPublicJobsAgentTickRoute: ApiPublicJobsAgentTickRoute,
   ApiPublicV1FeedRoute: ApiPublicV1FeedRoute,
   ApiPublicV1TrendingRoute: ApiPublicV1TrendingRoute,
