@@ -4,7 +4,11 @@ import { useMemo, useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ItemModal } from "@/components/ItemModal";
-import { Search, LayoutGrid, Rows3 } from "lucide-react";
+import { Search, LayoutGrid, Rows3, Sparkles, Loader2, X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { SimilarDialog } from "@/components/SimilarDialog";
+import { semanticSearch } from "@/lib/intel.functions";
 import { TrendCard, TerminalRow } from "@/components/TrendCard";
 import { useBookmarks } from "@/lib/bookmarks";
 import {
@@ -52,6 +56,22 @@ function Index() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [live, setLive] = useState<"connecting" | "live" | "off">("connecting");
   const [pulse, setPulse] = useState(0);
+  const [similarId, setSimilarId] = useState<string | null>(null);
+  const [aiMode, setAiMode] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiHits, setAiHits] = useState<{ q: string; ids: string[]; note: string } | null>(null);
+  const runSemantic = useServerFn(semanticSearch);
+  const doSemantic = async () => {
+    if (q.trim().length < 2) return;
+    setAiBusy(true);
+    try {
+      const r = await runSemantic({ data: { q } });
+      if (!r.ok) { toast.error(r.error); return; }
+      const note = [r.days ? `last ${r.days >= 1 ? `${r.days}d` : "24h"}` : "", r.types.join(", ")].filter(Boolean).join(" · ");
+      setAiHits({ q, ids: r.results.map((x) => x.id), note });
+    } catch { toast("Sign in to use AI semantic search"); }
+    finally { setAiBusy(false); }
+  };
   const qc = useQueryClient();
 
   useEffect(() => {
@@ -88,13 +108,14 @@ function Index() {
 
   const items = useMemo(() => {
     const now = Date.now();
+    if (aiHits) return aiHits.ids.flatMap((id) => data.filter((i) => i.id === id));
     return data
       .filter((i) => tab === "All" || i.type === tab)
       .filter((i) => !cat || i.category === cat)
       .filter((i) => !time || now - new Date(i.created_at).getTime() <= time * 3600e3)
       .filter((i) => !q.trim() || fuzzy(`${i.title_or_snippet} ${i.author_handle} ${i.author_name ?? ""} ${i.category} ${i.type} ${velocity[i.id] ?? ""}`, q))
       .sort((a, b) => sort === "rank" ? (b.rank_score ?? 0) - (a.rank_score ?? 0) : metricsOf(b).engagement_score - metricsOf(a).engagement_score);
-  }, [data, q, tab, cat, time, sort, velocity]);
+  }, [data, q, tab, cat, time, sort, velocity, aiHits]);
 
   const pill = (on: boolean) => `whitespace-nowrap rounded-md px-3 py-1.5 transition-colors ${on ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`;
   const seg = (on: boolean) => `rounded-sm px-2.5 py-1.5 ${on ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground"}`;
@@ -122,9 +143,15 @@ function Index() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
           <label className="relative min-w-[200px] flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Fuzzy search snippets, @handles, tags…"
-              className="h-9 w-full rounded-md border bg-card pl-9 pr-3 text-sm outline-none placeholder:text-muted-foreground focus:border-ring" />
+            <input value={q} onChange={(e) => { setQ(e.target.value); if (aiHits) setAiHits(null); }}
+              onKeyDown={(e) => { if (e.key === "Enter" && aiMode) void doSemantic(); }}
+              placeholder={aiMode ? "Ask anything: viral threads about local LLMs on Apple Silicon, last 14 days ↵" : "Fuzzy search snippets, @handles, tags…"}
+              className={`h-9 w-full rounded-md border bg-card pl-9 pr-3 text-sm outline-none placeholder:text-muted-foreground focus:border-ring ${aiMode ? "border-pro/60" : ""}`} />
           </label>
+          <button onClick={() => { setAiMode((m) => !m); setAiHits(null); }} aria-pressed={aiMode}
+            className={`flex h-9 items-center gap-1.5 rounded-md border px-3 text-xs ${aiMode ? "border-pro/60 text-pro" : "text-muted-foreground hover:text-foreground"}`}>
+            {aiBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}AI search
+          </button>
           <div className="flex rounded-md border p-0.5 font-mono text-xs">
             {TIMES.map((t) => <button key={t.l} onClick={() => setTime(t.h)} className={seg(time === t.h)}>{t.l}</button>)}
           </div>
@@ -145,6 +172,12 @@ function Index() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-6">
+        {aiHits && (
+          <div className="mb-3 flex items-center gap-2 font-mono text-xs text-pro">
+            <Sparkles className="h-3.5 w-3.5" />{aiHits.ids.length} semantic matches for "{aiHits.q}"{aiHits.note && <span className="text-muted-foreground">· {aiHits.note}</span>}
+            <button onClick={() => setAiHits(null)} aria-label="Clear AI results" className="ml-auto text-muted-foreground hover:text-foreground"><X className="h-3.5 w-3.5" /></button>
+          </div>
+        )}
         {isLoading ? (
           <div className="grid gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -161,7 +194,7 @@ function Index() {
         ) : view === "grid" ? (
           <div className="grid gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-2 lg:grid-cols-3">
             {items.map((i) => <TrendCard key={i.id} item={i} saved={ids.has(i.id)} onToggle={() => toggle(i.id)}
-              velocity={velocity[i.id]} curator={i.submitted_by ? curatorById[i.submitted_by] : undefined} onOpen={() => setOpenId(i.id)} />)}
+              velocity={velocity[i.id]} curator={i.submitted_by ? curatorById[i.submitted_by] : undefined} onOpen={() => setOpenId(i.id)} onSimilar={() => setSimilarId(i.id)} />)}
             {Array.from({ length: (3 - (items.length % 3)) % 3 }).map((_, k) => <div key={k} className="hidden bg-background lg:block" />)}
           </div>
         ) : (
@@ -175,6 +208,7 @@ function Index() {
           </div>
         )}
       </div>
+      <SimilarDialog item={data.find((i) => i.id === similarId) ?? null} onClose={() => setSimilarId(null)} />
       <ItemModal item={data.find((i) => i.id === openId) ?? null} velocity={openId ? velocity[openId] : null} onClose={() => setOpenId(null)} />
     </main>
   );

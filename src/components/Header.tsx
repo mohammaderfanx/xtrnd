@@ -4,6 +4,19 @@ import { usePlan } from "@/lib/plan";
 import { ProBadge } from "./ProBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/xtrnd";
+import { setActiveWorkspace, useWorkspaces } from "@/lib/workspace";
+
+function WorkspaceSwitcher() {
+  const { session, workspaces, current } = useWorkspaces();
+  if (!session) return null;
+  return (
+    <select aria-label="Workspace" value={current?.id ?? ""} onChange={(e) => setActiveWorkspace(e.target.value || null)}
+      className="h-8 max-w-[9rem] truncate rounded-md border bg-card px-2 font-mono text-xs text-muted-foreground">
+      <option value="">Personal</option>
+      {workspaces.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
+    </select>
+  );
+}
 
 export function Header() {
   const { session } = useSession();
@@ -18,6 +31,10 @@ export function Header() {
           Xtrnd
         </Link>
         <nav className="ml-auto flex items-center gap-1 text-sm">
+          <WorkspaceSwitcher />
+          <Link to="/agents" className={nav} activeProps={{ className: "text-foreground" }}>Agents</Link>
+          <Link to="/graph" className={nav} activeProps={{ className: "text-foreground" }}>Graph</Link>
+          <Link to="/workspace" className={nav} activeProps={{ className: "text-foreground" }}>Workspace</Link>
           <Link to="/feeds" className={nav} activeProps={{ className: "text-foreground" }}>Feeds</Link>
           <Link to="/digest" className={nav} activeProps={{ className: "text-foreground" }}>Digest</Link>
           <Link to="/developers" className={nav} activeProps={{ className: "text-foreground" }}>API</Link>
