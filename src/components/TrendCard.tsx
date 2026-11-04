@@ -1,10 +1,10 @@
-import { Bookmark, BookmarkCheck, Eye, Heart, Repeat2, ArrowUpRight } from "lucide-react";
+import { Bookmark, BookmarkCheck, Eye, Heart, Repeat2, ArrowUpRight, Sparkles } from "lucide-react";
 import { fmt, metricsOf, type Curator, type Item, type Velocity } from "@/lib/xtrnd";
 import { Avatar, CuratorBadge, ScoreBadge, ShareMenu, VelocityBadge } from "./ItemBits";
 
-type Props = { item: Item; saved: boolean; onToggle: () => void; velocity?: Velocity | undefined; curator?: Curator | undefined; onOpen?: (() => void) | undefined };
+type Props = { item: Item; saved: boolean; onToggle: () => void; velocity?: Velocity | undefined; curator?: Curator | undefined; onOpen?: (() => void) | undefined; onSimilar?: (() => void) | undefined };
 
-export function TrendCard({ item, saved, onToggle, velocity = null, curator, onOpen }: Props) {
+export function TrendCard({ item, saved, onToggle, velocity = null, curator, onOpen, onSimilar }: Props) {
   const m = metricsOf(item);
   const social = item.type !== "Account" && item.type !== "Community";
   return (
@@ -35,6 +35,8 @@ export function TrendCard({ item, saved, onToggle, velocity = null, curator, onO
           className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">
           View on X.com <ArrowUpRight className="h-4 w-4" />
         </a>
+        {onSimilar && <button onClick={onSimilar} aria-label="Find similar" title="Find similar"
+          className="rounded-md border px-3 text-muted-foreground transition-colors hover:bg-accent hover:text-pro"><Sparkles className="h-4 w-4" /></button>}
         <ShareMenu item={item} />
         <button onClick={onToggle} aria-label={saved ? "Remove bookmark" : "Bookmark"} aria-pressed={saved}
           className={`rounded-md border px-3 transition-colors hover:bg-accent ${saved ? "text-signal" : "text-muted-foreground"}`}>

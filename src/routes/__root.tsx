@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { CommandPalette } from "@/components/CommandPalette";
 import { Toaster } from "@/components/ui/sonner";
+import { AudioPlayer } from "@/components/AudioPlayer";
 
 function NotFoundComponent() {
   return (
@@ -130,7 +131,8 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <Header />
       <CommandPalette />
-      <Outlet />
+      <div className="pb-16"><Outlet /></div>
+      <AudioPlayer />
       <Toaster theme="dark" position="bottom-right" />
     </QueryClientProvider>
   );
