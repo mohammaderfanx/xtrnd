@@ -107,7 +107,7 @@ function responseText(res: unknown) {
 }
 
 export async function writeText(instructions: string, input: string) {
-  const res = await generateResponse({ model: "openai/gpt-6-astra", instructions, input, store: false, reasoning: { effort: "low" } });
+  const res = await generateResponse({ model: "openai/gpt-6-astra", instructions, input, reasoning: { effort: "low" } });
   return responseText(res).trim();
 }
 

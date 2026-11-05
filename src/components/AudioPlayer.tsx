@@ -30,11 +30,11 @@ export function AudioPlayer() {
   }
   const brief = data?.brief;
   const generate = async () => {
-    if (!session) return toast("Sign in to generate today's brief");
+    if (!session) return void toast("Sign in to generate today's brief");
     setBusy(true);
     const r = await gen();
     setBusy(false);
-    if (!r.ok) return toast.error(r.error);
+    if (!r.ok) return void toast.error(r.error);
     await qc.invalidateQueries({ queryKey: ["daily-brief"] });
     toast.success("Today's audio brief is ready");
   };

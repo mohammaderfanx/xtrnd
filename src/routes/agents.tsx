@@ -68,14 +68,14 @@ function Agents() {
     setBusy("test");
     const r = await test({ data: { system_prompt: d.prompt, criteria: toCriteria(d) } });
     setBusy(null);
-    if (!r.ok) return toast.error(r.error);
+    if (!r.ok) return void toast.error(r.error);
     setPreview({ scanned: r.scanned, hits: r.hits });
   };
   const save = async () => {
-    if (!d.name.trim() || !(d.prompt.trim() || d.semantic.trim())) return toast.error("Give the agent a name and a persona or search intent.");
-    if (agents.length >= MAX_AGENTS) return toast.error(`You can have up to ${MAX_AGENTS} agents.`);
+    if (!d.name.trim() || !(d.prompt.trim() || d.semantic.trim())) return void toast.error("Give the agent a name and a persona or search intent.");
+    if (agents.length >= MAX_AGENTS) return void toast.error(`You can have up to ${MAX_AGENTS} agents.`);
     const { error } = await supabase.from("ai_agents").insert({ user_id: session!.user.id, name: d.name.trim(), system_prompt: d.prompt.trim(), criteria_config: toCriteria(d) });
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Agent activated — it will run on its schedule");
     setD(empty); setPreview(null); refresh();
   };

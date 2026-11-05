@@ -66,13 +66,13 @@ function WorkspacePage() {
   const create = async () => {
     if (!newName.trim()) return;
     const { data, error } = await supabase.from("workspaces").insert({ name: newName.trim(), owner_id: session.user.id }).select("id").single();
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     setNewName(""); await refetch(); setActiveWorkspace(data.id); toast.success("Workspace created");
   };
   const doInvite = async () => {
     const { data, error } = await supabase.rpc("invite_workspace_member", { p_ws: wsId!, p_email: invite.email, p_role: invite.role });
-    if (error) return toast.error(error.message);
-    if (!data) return toast.error("No Xtrnd account with that email yet — ask them to sign up first.");
+    if (error) return void toast.error(error.message);
+    if (!data) return void toast.error("No Xtrnd account with that email yet — ask them to sign up first.");
     setInvite({ ...invite, email: "" }); qc.invalidateQueries({ queryKey: ["ws-members", wsId] }); toast.success("Member added");
   };
   const typing = (label: string | null) => {
@@ -84,7 +84,7 @@ function WorkspacePage() {
     const t = tags.split(",").map((x) => x.trim().toLowerCase()).filter(Boolean).slice(0, 8);
     if (!text.trim() && !t.length) return;
     const { error } = await supabase.from("item_annotations").insert({ workspace_id: wsId!, item_id: itemId, author_id: session.user.id, comment_text: text.trim().slice(0, 2000), tags: t });
-    if (error) return toast.error(error.message.includes("row-level") ? "Viewers can't comment." : error.message);
+    if (error) return void toast.error(error.message.includes("row-level") ? "Viewers can't comment." : error.message);
     typing(null); qc.invalidateQueries({ queryKey: ["ws-notes", wsId] });
   };
   const emailOf = (uid: string) => members.find((m) => m.user_id === uid)?.email ?? "teammate";
