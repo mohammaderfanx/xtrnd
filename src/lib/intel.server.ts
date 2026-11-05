@@ -42,7 +42,7 @@ export async function processEmbeddingQueue(admin: Admin, limit = 16) {
 type Candidate = { item_id: string; similarity: number; text_rank: number; score: number };
 
 /** Score items for an agent; shared by live preview and scheduled runs. */
-export async function evaluateAgent(db: Admin, criteria: AgentCriteria, queryVec: number[], sinceDays = 14) {
+export async function evaluateAgent(db: Admin, criteria: AgentCriteria, queryVec: number[], sinceDays = 90) {
   const kw = (criteria.keywords ?? []).filter(Boolean);
   const { data, error } = await db.rpc("hybrid_search", {
     query_embedding: toVec(queryVec), query_text: kw.join(" or "), match_count: 30,
