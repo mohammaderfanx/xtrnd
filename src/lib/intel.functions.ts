@@ -74,7 +74,8 @@ export const runAgentNow = createServerFn({ method: "POST" })
     if (!own) return { ok: false as const, error: "Agent not found" };
     if (own.last_run_at && Date.now() - new Date(own.last_run_at).getTime() < 60e3) return { ok: false as const, error: "Wait a minute between manual runs." };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { runAgent } = await import("./intel.server");
+    const { runAgent, processEmbeddingQueue } = await import("./intel.server");
+    await processEmbeddingQueue(supabaseAdmin, 16); // make sure fresh items are indexed before scanning
     const r = await runAgent(supabaseAdmin, data.agentId);
     return r && !("error" in r) ? { ok: true as const, ...r } : { ok: false as const, error: "Agent run failed — see the log." };
   });
