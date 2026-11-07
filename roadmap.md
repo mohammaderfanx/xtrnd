@@ -1,4 +1,5 @@
 # Phase 4
+- [ ] Publish current agent code and run one agent; confirm whether new real posts are discovered.
 - [x] Vectors, hybrid search, Find Similar
 - [x] Scheduled AI agents with health dashboard
 - [x] Knowledge graph page
