@@ -6,7 +6,7 @@ import { intervalMs, parseNaturalQuery, type AgentCriteria } from "./intel-rules
 
 type Admin = SupabaseClient<Database>;
 export const EMBED_DIM = 1536;
-export const AGENT_SIM_THRESHOLD = 0.55;
+export const AGENT_SIM_THRESHOLD = 0.66;
 
 export async function embed(texts: string[]): Promise<number[][]> {
   const res = await generateEmbeddings({ model: "google/gemini-embedding-2", input: texts, dimensions: EMBED_DIM });

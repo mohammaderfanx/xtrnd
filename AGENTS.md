@@ -17,3 +17,7 @@
 - API limits are assigned and revalidated from active subscriptions in database functions and triggers, so direct key inserts and plan changes cannot bypass tier limits.
 - Alert dispatch must claim each fresh item through an owner-checked database function before privileged webhook delivery, preventing cross-user and repeated dispatch.
 - Digest selection bounds live in a browser-safe helper shared by the page and tests, keeping export eligibility consistent.
+- Phase 4 AI work (embeddings queue, agent runs, daily audio brief) lives in src/lib/intel.server.ts and runs from the cron-authenticated /api/public/jobs/agent-tick route behind a database lease, so scheduled work is single-flight and never blocks item inserts.
+- Embeddings use the gateway embedding model at 1536 dimensions; agent match thresholds are calibrated to that model's score range, so re-check the threshold if the model changes.
+- Workspace isolation is enforced by RLS via workspace_role_of(); members are only added through the owner-checked invite_workspace_member function.
+- Audio briefs are cached per day in a private storage bucket and served through short-lived signed URLs to avoid duplicate generation.

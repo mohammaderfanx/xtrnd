@@ -3,7 +3,7 @@ export type GNode = { id: string; label: string; kind: "Creator" | "Community" |
 export type GEdge = { source: string; target: string; relation: string };
 
 type ItemLite = { id: string; author_handle: string; author_name: string | null; category: string; type: string; title_or_snippet: string };
-const STOP = new Set("the a an and or for with from that this into your you our are was were will have has how why what when who its it's about over more most than then them they their there just like can not but all any new one two use using via".split(" "));
+const STOP = new Set("the a an and or for with from that this into your you our are was were will have has how why what when who its it's about over more most than then them they their there just like can not but all any new one two use using via here thread demo".split(" "));
 
 /** Concepts = capitalized multi-letter terms and known tech phrases appearing in AI takeaways or text. */
 export function extractConcepts(text: string): string[] {

@@ -1,7 +1,8 @@
-# Phase 3 completion
-- [x] Enforce tier-specific API limits and alert permissions.
-- [x] Enforce the digest's 5–10-item selection rule.
-- [x] Complete page sharing metadata.
-- [x] Verify signed-in Pro feeds, API keys, cached reader exports, and digest.
-- [x] Run regression tests.
-- [ ] Verify actual Discord/Slack delivery; blocked by absence of a real destination webhook.
+# Phase 4
+- [x] Vectors, hybrid search, Find Similar
+- [x] Scheduled AI agents with health dashboard
+- [x] Knowledge graph page
+- [x] Daily audio brief with cached audio
+- [x] Team workspaces with comments, tags, presence
+- [x] Rule tests
+- [ ] Verify actual Slack/Discord delivery; blocked by absence of a real destination webhook.
