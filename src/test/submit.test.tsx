@@ -11,6 +11,7 @@ vi.mock("@tanstack/react-query", () => ({ useQueryClient: () => ({}) }));
 vi.mock("@tanstack/react-start", () => ({ useServerFn: () => mocks.unfurl }));
 vi.mock("@/lib/unfurl.functions", () => ({ unfurlX: {} }));
 vi.mock("@/lib/pro.functions", () => ({ dispatchFeeds: {} }));
+vi.mock("@/lib/intel.functions", () => ({ kickEmbeddings: {} }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
 vi.mock("@/components/ItemBits", () => ({ Avatar: () => null }));
 vi.mock("@/lib/xtrnd", () => ({
