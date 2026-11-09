@@ -1,0 +1,12 @@
+REVOKE SELECT ON public.item_embeddings, public.audio_briefs, public.kg_nodes, public.kg_edges FROM anon;
+DROP POLICY "embeddings public read" ON public.item_embeddings;
+CREATE POLICY "signed in embeddings read" ON public.item_embeddings FOR SELECT TO authenticated USING ((SELECT auth.uid()) IS NOT NULL);
+DROP POLICY "briefs public read" ON public.audio_briefs;
+CREATE POLICY "signed in briefs read" ON public.audio_briefs FOR SELECT TO authenticated USING ((SELECT auth.uid()) IS NOT NULL);
+DROP POLICY "kg nodes read" ON public.kg_nodes;
+CREATE POLICY "signed in graph nodes read" ON public.kg_nodes FOR SELECT TO authenticated USING ((SELECT auth.uid()) IS NOT NULL);
+DROP POLICY "kg edges read" ON public.kg_edges;
+CREATE POLICY "signed in graph edges read" ON public.kg_edges FOR SELECT TO authenticated USING ((SELECT auth.uid()) IS NOT NULL);
+REVOKE EXECUTE ON FUNCTION public.hybrid_search FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.similar_items FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.hybrid_search, public.similar_items TO authenticated, service_role;
