@@ -12,7 +12,8 @@ export function AudioPlayer() {
   const { session } = useSession();
   const qc = useQueryClient();
   const gen = useServerFn(generateDailyBrief);
-  const { data } = useQuery({ queryKey: ["daily-brief"], queryFn: () => getDailyBrief(), staleTime: 30 * 60e3 });
+  const getBrief = useServerFn(getDailyBrief);
+  const { data } = useQuery({ queryKey: ["daily-brief", session?.user.id], enabled: !!session, queryFn: () => getBrief(), staleTime: 30 * 60e3 });
   const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [pos, setPos] = useState(0);
@@ -28,7 +29,7 @@ export function AudioPlayer() {
         className="fixed bottom-4 left-4 z-40 grid h-10 w-10 place-items-center rounded-full border bg-card text-signal shadow-lg"><Headphones className="h-4 w-4" /></button>
     );
   }
-  const brief = data?.brief;
+  const brief = session ? data?.brief : null;
   const generate = async () => {
     if (!session) return void toast("Sign in to generate today's brief");
     setBusy(true);
