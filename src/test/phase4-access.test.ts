@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-const url = import.meta.env.VITE_SUPABASE_URL;
-const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const url = import.meta.env['VITE_SUPABASE_URL'];
+const key = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
 
 describe("anonymous Phase 4 access", () => {
   for (const table of ["item_embeddings", "audio_briefs", "kg_nodes", "kg_edges"]) {
