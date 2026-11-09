@@ -21,3 +21,4 @@
 - Embeddings use the gateway embedding model at 1536 dimensions; agent match thresholds are calibrated to that model's score range, so re-check the threshold if the model changes.
 - Workspace isolation is enforced by RLS via workspace_role_of(); members are only added through the owner-checked invite_workspace_member function.
 - Audio briefs are cached per day in a private storage bucket and served through short-lived signed URLs to avoid duplicate generation.
+- Phase 4 collections and vector RPCs require app sign-in; brief lookup checks caller RLS before issuing a signed audio URL, preventing anonymous enumeration.

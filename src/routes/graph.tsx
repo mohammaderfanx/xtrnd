@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { itemsQuery } from "@/lib/xtrnd";
+import { itemsQuery, useSession } from "@/lib/xtrnd";
 import { buildGraph, type GNode } from "@/lib/graph";
 
 export const Route = createFileRoute("/graph")({
@@ -23,8 +23,9 @@ const COLORS: Record<string, string> = { Creator: "var(--color-signal)", Communi
 const W = 1000, H = 640;
 
 function GraphPage() {
+  const { session } = useSession();
   const { data: items = [] } = useQuery(itemsQuery);
-  const { data: kg } = useQuery({ queryKey: ["kg"], queryFn: async () => ({
+  const { data: kg } = useQuery({ queryKey: ["kg", session?.user.id], enabled: !!session, queryFn: async () => ({
     nodes: (await supabase.from("kg_nodes").select("*")).data ?? [],
     edges: (await supabase.from("kg_edges").select("*")).data ?? [],
     insights: (await supabase.from("ai_item_insights").select("item_id, key_takeaways")).data ?? [],

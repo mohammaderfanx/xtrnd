@@ -4,14 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar } from "./ItemBits";
 import type { Item } from "@/lib/xtrnd";
+import { useSession } from "@/lib/xtrnd";
 
 export function SimilarDialog({ item, onClose }: { item: Item | null; onClose: () => void }) {
+  const { session } = useSession();
   const { data, isLoading } = useQuery({
-    queryKey: ["similar", item?.id],
-    enabled: !!item,
+    queryKey: ["similar", item?.id, session?.user.id],
+    enabled: !!item && !!session,
     staleTime: 5 * 60e3,
     queryFn: async () => {
-      const { data: sims, error } = await supabase.rpc("similar_items", { p_item_id: item!.id, match_count: 5 });
+      if (!item) return [];
+      const { data: sims, error } = await supabase.rpc("similar_items", { p_item_id: item.id, match_count: 5 });
       if (error) throw error;
       const ids = (sims ?? []).map((s) => s.item_id);
       if (!ids.length) return [];
@@ -25,7 +28,8 @@ export function SimilarDialog({ item, onClose }: { item: Item | null; onClose: (
         <DialogHeader><DialogTitle className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-pro" />Similar signals</DialogTitle></DialogHeader>
         <p className="line-clamp-2 text-xs text-muted-foreground">Semantically related to: {item?.title_or_snippet}</p>
         <div className="divide-y rounded-md border">
-          {isLoading ? <p className="p-4 text-sm text-muted-foreground">Clustering…</p>
+          {!session ? <p className="p-4 text-sm text-muted-foreground">Sign in to find similar signals.</p>
+            : isLoading ? <p className="p-4 text-sm text-muted-foreground">Clustering…</p>
             : !data?.length ? <p className="p-4 text-sm text-muted-foreground">This item hasn't been indexed yet — try again in a few minutes.</p>
             : data.map(({ item: i, sim }) => (
               <a key={i.id} href={i.external_url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 p-3 hover:bg-accent">

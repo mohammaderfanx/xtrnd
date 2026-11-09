@@ -82,11 +82,11 @@ export const runAgentNow = createServerFn({ method: "POST" })
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-/** Public: latest cached brief with a short-lived audio link. */
-export const getDailyBrief = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: b } = await supabaseAdmin.from("audio_briefs").select("day, item_ids, script, storage_path").order("day", { ascending: false }).limit(1).maybeSingle();
+/** Signed-in: latest cached brief with a short-lived audio link. */
+export const getDailyBrief = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
+  const { data: b } = await context.supabase.from("audio_briefs").select("day, item_ids, script, storage_path").order("day", { ascending: false }).limit(1).maybeSingle();
   if (!b) return { brief: null, isToday: false };
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: s } = await supabaseAdmin.storage.from("audio-briefs").createSignedUrl(b.storage_path, 3600);
   return { brief: { day: b.day, script: b.script, itemIds: b.item_ids, url: s?.signedUrl ?? null }, isToday: b.day === today() };
 });

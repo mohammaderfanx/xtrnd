@@ -36,6 +36,13 @@
       "when": 1793693521922,
       "tag": "0004_phase4_agents_vectors_workspaces",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794225134979,
+      "tag": "0005_restrict_phase4_collection_access",
+      "breakpoints": true
     }
   ]
 }
